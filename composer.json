@@ -1,6 +1,6 @@
 {
     "name": "m1x0n/bsa-php-2017",
-    "description": "First lecture home assignment for Binary Studio Academy 2017",
+    "description": "First lecture's home assignment for Binary Studio Academy 2017",
     "license": "GPL",
     "authors": [
         {
@@ -8,5 +8,18 @@
             "email": "mmorozovm@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "BinaryStudioAcademy\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BinaryStudioAcademyTests\\": "tests/"
+        }
+    }
 }
