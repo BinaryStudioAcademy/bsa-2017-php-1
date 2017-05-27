@@ -4,37 +4,42 @@ namespace BinaryStudioAcademyTests\Task3;
 
 class BuiltInServerRunner
 {
-    const START_COMMAND = 'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!';
-    const STOP_COMMAND = 'kill %s';
     const HOST = 'localhost';
     const PORT = 1234;
-    const DOCUMENT_ROOT = __DIR__ . '/../../src/Task3/';
     const TEST_ENDPOINT = 'http://localhost:1234';
+    const DOCUMENT_ROOT = __DIR__ . '/../../src/Task3/';
 
-    private static $pid;
+    private $runner;
+    private $process;
+
+    public function __construct()
+    {
+        $this->runner = $this->isRunningOnWindows()
+            ? new WindowsRunner()
+            : new DefaultRunner();
+    }
+
+    private function isRunningOnWindows(): bool
+    {
+        return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+    }
 
     public function start()
     {
-        $command = sprintf(
-            self::START_COMMAND,
+        $this->process = $this->runner->start(
             self::HOST,
             self::PORT,
-            self::DOCUMENT_ROOT
+            realpath(self::DOCUMENT_ROOT)
         );
-
-        $result = [];
-
-        exec($command, $result);
-
-        self::$pid = $result[0];
 
         sleep(1);
     }
 
     public function stop()
     {
-        if (self::$pid) {
-            exec(sprintf(self::STOP_COMMAND, self::$pid));
+        if ($this->process) {
+            $this->runner->stop($this->process);
+            $this->process = null;
         }
     }
 }
